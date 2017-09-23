@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import AppBar from 'material-ui/AppBar';
-
+import Home from './components/Home';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import './App.css';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-         <AppBar
-            title="Media.net challenge"
-          />
+        <MuiThemeProvider>
+          <Home />
+        </MuiThemeProvider>
       </div>
     );
   }

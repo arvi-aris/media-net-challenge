@@ -7,6 +7,17 @@
   height: 80px;
 }
 
+.hide{
+  display: none;
+}
+
+.green{
+  background-color: green;
+}
+
+.red{
+  background-color: red
+}
 .App-header {
   background-color: #222;
   height: 150px;
