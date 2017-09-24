@@ -2,6 +2,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Folder Structure:
 
+```
   public/
     index.html
     favicon.ico
