@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 var BarChart = require('react-d3-basic').BarChart;
-
+//GraphView Component
+//renders price details in a Bar chart
 class GraphView extends Component{
     constructor(props){ 
         super(props);

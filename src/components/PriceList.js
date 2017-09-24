@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
-import lodash from 'lodash';
 import Toggle from 'material-ui/Toggle';
 import TableView from './TableView';
 import GraphView from './GraphView';
 import Popover from 'material-ui/Popover';
-import RaisedButton from 'material-ui/RaisedButton';
 import IconButton from 'material-ui/IconButton';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import FilterIcon from 'material-ui/svg-icons/content/filter-list';
 
+// Style object for price list layout
 let styles = {
   toggleStyle : {
     width : '12%',
@@ -28,23 +27,29 @@ let styles = {
     left: '38%'
   }
 }
+
 class PriceList extends Component{
 
     constructor(props){
       super(props);
       this.state = {
-        tableValues : [],
-        view : 'table',
-        filterMenu: false,
-        filter:"All"
+        tableValues : [],    // Stock prices from Server with timeStamp and Change in price values
+        view : 'table',      // User chosen view
+        filterMenu: false,   // Boolean to control Filter menu 
+        filter:"All"         // Filter, which is Currently applied 
       };
     }
-
+    /**
+     * Method to get Time Stamp
+     */
     getTimeStamp(){
       let nowDate = new Date();
       return (nowDate.getDate()<10 ? "0"+nowDate.getDate() : nowDate.getDate()) + "/" +nowDate.getMonth() + "/" + nowDate.getFullYear() + "-" + nowDate.getHours() +":" + nowDate.getMinutes()+":"+nowDate.getSeconds();
-    }
-
+    }  
+    /**
+     * This method process incoming stock prices from server
+     * @param  {} data (Data from server)
+     */
     processStockPrices(data){
       let aoStockObj = [];
       let timeStamp = new Date().getMilliseconds();
@@ -54,29 +59,28 @@ class PriceList extends Component{
         tempObj.ticker = elem[0];
         tempObj.price = elem[1];
         tempObj.timeStamp = timeStamp;
-        tempObj.displayTime = this.getTimeStamp(timeStamp)
+        tempObj.displayTime = this.getTimeStamp(timeStamp); 
         aoStockObj.push(tempObj);
       });
-      this.updateDuplicatedStocks(aoStockObj);
-      this.compareWithPreviousState(aoStockObj)
+      this.compareWithPreviousState(aoStockObj);  //To integrate with previous state of values
     }
-
-    
-    updateDuplicatedStocks(newStockPrices){
-      newStockPrices = lodash.uniqBy(newStockPrices,'ticker');
-      return newStockPrices;
-    }
-
+    /**
+     * This method compares incoming stock prices with previous list of stock details
+     * If the ticker is already present, find the change in price and update
+     * Or Add as a new item to the list
+     * and Change the state
+     * @param  {} newStockPrices (Processed new list of stock details from server)
+     */
     compareWithPreviousState(newStockPrices){ 
       let presentStocks = this.state.tableValues;
       newStockPrices.forEach((stock) => {
         let updatedStock = presentStocks.find((obj) => obj.ticker === stock.ticker);
-        if(updatedStock){
+        if(updatedStock){               // The ticker item is already present, then update
           updatedStock.priceChange = (updatedStock.price < stock.price) ? 1 : -1;
           updatedStock.price = stock.price;
           updatedStock.displayTime = "few seconds ago ( "+this.getTimeStamp(stock.timeStamp) + " )";
           updatedStock.timeStamp = stock.timeStamp;
-      }else{
+      }else{                          // New item , so add to the list
           presentStocks.push(stock);
         }
       });
@@ -84,14 +88,23 @@ class PriceList extends Component{
         tableValues : presentStocks
       })
     }
-
+    
+    /** 
+     * Control handler of view toggle
+     * @param  {} e (Event)
+     * @param  {} isGraphView (Boolean , true for graphView,
+     *                                   false for tableView)
+     */
     toggleView(e,isGraphView){
       let view= (isGraphView) ? "graph" : "table";
       this.setState({
         view:view
       })
     }
-
+    /**
+     * Control handle for filter menu
+     * @param  {} event
+     */
     handleFilter = (event) => {
       event.preventDefault();
       this.setState({
@@ -99,13 +112,20 @@ class PriceList extends Component{
         anchorEl: event.currentTarget,
       });
     }
-
+    /**
+     * Closing of filter menu
+     */
     handleRequestClose = () => {
     this.setState({
         filterMenu: false,
       });
     };
-
+    /**
+     * This method gets invoked when a filter is applied
+     * @param  {} e
+     * @param  {} filter {"All","Increasing","Decreasing"}
+     * @param  {} index
+     */
     applyFilter = (e,filter,index) => {
       let filterValue = filter.props.primaryText;
       this.setState({
@@ -113,14 +133,22 @@ class PriceList extends Component{
       })
       this.handleRequestClose();
     }
-    
+    /**
+     * It gets invoked when the Pricelist component is mounted
+     * Initiates websocket connection with Server
+     * And on message, Transfers the data to relevant method.
+     */
     componentDidMount(){
         this.ws = new WebSocket('ws://stocks.mnet.website')
         this.ws.onmessage = e => {this.processStockPrices(e.data)}
         this.ws.onerror = e => {}
         this.ws.onclose = e => {}
     }
-
+    /**
+     * This method gets invoked
+     * When PriceList component is mentioned.
+     * Renders the view and toggles
+     */
     render(){
       return( 
           <div>
