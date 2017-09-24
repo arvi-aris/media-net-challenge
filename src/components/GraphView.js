@@ -22,10 +22,18 @@ class GraphView extends Component{
         xLabel = "Ticker",
         yLabel = "Price",
         yTicks = [20];
+        if(this.props.filter === "Increasing"){
+            chartSeries[0].color = "green";
+        }
+        if(this.props.filter === "Decreasing"){
+            chartSeries[0].color = "red";
+        }
         return(
                <BarChart
                     title= {title}
-                    data= {this.props.tableValues}
+                    data= {this.props.tableValues.filter((stock) => {
+                        return (this.props.filter === "All" || (this.props.filter === "Increasing" && stock.priceChange>0) || (this.props.filter === "Decreasing" && stock.priceChange<0)) ? true : false;
+                    })}
                     width= {width}
                     height= {height}
                     chartSeries = {chartSeries}

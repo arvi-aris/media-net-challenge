@@ -14,7 +14,7 @@ let styles = {
   toggleStyle : {
     width : '12%',
     'margin-top': '25px',
-     right: '45%',
+     right: '42%',
      display:'inline-block'
   },
    thumbSwitched: {
@@ -25,7 +25,7 @@ let styles = {
   },
   filterStyle:{
     position: 'relative',
-    left: '45%'
+    left: '38%'
   }
 }
 class PriceList extends Component{
@@ -131,9 +131,7 @@ class PriceList extends Component{
               thumbSwitchedStyle={styles.thumbSwitched}
               trackSwitchedStyle={styles.trackSwitched}
               title="Toggle views ( Table and Graph)"
-            />
-            {this.state.view === "table" ?
-            ( <div> 
+            />            
               <IconButton 
                 onClick={this.handleFilter}
                 tooltip="Filter table"
@@ -154,8 +152,9 @@ class PriceList extends Component{
                   <MenuItem primaryText="Decreasing" />
                 </Menu>
               </Popover>
-             <TableView tableValues = {this.state.tableValues} filter={this.state.filter} /> </div>)
-            : <GraphView tableValues = {this.state.tableValues} />}
+              {this.state.view === "table" ?
+              <TableView tableValues = {this.state.tableValues} filter={this.state.filter} /> 
+            : <GraphView tableValues = {this.state.tableValues} filter={this.state.filter}/>}
           </div>
       )
     }

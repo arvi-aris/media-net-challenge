@@ -23,7 +23,7 @@ class TableView extends Component{
 
     render(){
         return(
-              <Table style={{'padding' : '25px','margin':'10px'}}>
+              <Table>
             <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
               <TableRow>
                 <TableHeaderColumn>Ticker</TableHeaderColumn>
